@@ -15,6 +15,8 @@
  - プライベートサブネットにMySQLのDBを作成しセキュリティグループも作成
  ![RDS1](images/lecture04/construct-rds1.png)
  ![RDS2](images/lecture04/construct-rds2.png)
+ ![RDSsubnet](images/lecture04/RDS-subnetgroup.png)
+ ![RDS-SG](images/lecture04/RDS-SG.png)
 
 ## EC2からRDSへの接続確認
  ![EC2toRDS](images/lecture04/EC2toRDS.png)
