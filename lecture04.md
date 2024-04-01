@@ -17,8 +17,11 @@
  ![RDS2](images/lecture04/construct-rds2.png)
  ![RDSsubnet](images/lecture04/RDS-subnetgroup.png)
  ![RDS-SG](images/lecture04/RDS-SG.png)
+ - RDSに設定したプライベートサブネットの詳細を追加
+ ![RDS-subnet](images/lecture04/RDS-subnetgroup-details1.png)
+ ![RDS-subnet](images/lecture04/RDS-subnetgroup-details2.png)
+ ![RDS-subnet](images/lecture04/RDS-subnetgroup-details3.png)
 
 ## EC2からRDSへの接続確認
  ![EC2toRDS](images/lecture04/EC2toRDS.png)
-
 
