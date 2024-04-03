@@ -12,8 +12,8 @@
  ![EC2-keypair](images/lecture04/EC2-keypair.png)
  - ※EC2インスタンスのセキュリティーグループを変更
  - （ポートを0.0.0.0/0からマイIPに変更することで、アクセス元を絞ることが出来セキュリティ対策になる）
- ![change inbound rules](images/lecture04/change inbound rules1.png)
- ![change inbound rules](images/lecture04/change inbound rules2.png)
+ ![change inbound rules](images/lecture04/"change inbound rules1.png")
+ ![change inbound rules](images/lecture04/"change inbound rules2.png")
 
 ## RDSの作成
  - プライベートサブネットにMySQLのDBを作成しセキュリティグループも作成
