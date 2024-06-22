@@ -1,6 +1,6 @@
 # 第六回授業課題
 
-## AWSの利用記録をCloudTrailのイベント履歴から探し出す（IAMユーザー名のもの
+## AWSの利用記録をCloudTrailのイベント履歴から探し出す（IAMユーザー名のもの)
 ### イベント名：CheckMfa
  ![event](/images/lecture06/event.png)
 ### 含まれている内容3つをピックアップ
