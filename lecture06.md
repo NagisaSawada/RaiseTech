@@ -24,7 +24,7 @@
   ![alarm](/images/lecture06/alarm.png)
 
 ## 今日までに作成したAWSリソースの利用料の内容を見積もる（URLで共有）
- - 見積は[こちら](https://calculator.aws/#/estimate?id=13ddeefe958eb2374ec99b00ca7ca4861b4c57f2)
+ - 見積は[こちら](https://calculator.aws/#/estimate?id=49d414149ac6fe622e0be28ee8097be0d598382e)
 
 ## 先月の請求情報からEC2の利用料金が無料利用枠で収まっているか確認
  - 先月の請求の概要
