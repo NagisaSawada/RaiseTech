@@ -1,0 +1,100 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: 
+  Create S3 Bucket
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-s3
+      #暗号化についての設定
+      BucketEncryption:
+        #暗号化にはS3管理のSSE-S3を使用するように設定
+        ServerSideEncryptionConfiguration: 
+          - ServerSideEncryptionByDefault: 
+              SSEAlgorithm: AES256
+      #パブリックアクセスを全て無効に設定   
+      PublicAccessBlockConfiguration: 
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      #バケットのアクセス許可をプライベートに設定  
+      AccessControl: Private
+      Tags:
+      -
+        Key: Name
+        Value: !Sub ${AWS::StackName}-s3
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          #許可するアクションを指定
+          - Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:ListBucket
+              - s3:DeleteObject
+              - s3:GetBucketLocation
+            Effect: Allow
+            Resource:
+              #S3バケット全体に対するアクセスを許可 
+              - !Sub arn:aws:s3:::${S3Bucket}
+              #バケット内のすべてのオブジェクトに対するアクセスを許可
+              - !Sub arn:aws:s3:::${S3Bucket}/*
+            Principal:
+              #AWSアカウント内のエンティティによるアクセスを許可
+              AWS:
+                - !GetAtt S3AccessRole.Arn
+                
+  S3AccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-s3-access-role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        #EC2インスタンスがロールをアタッチできるように設定
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+  S3AccessInstanceProfile:
+    #IAMロールをインスタンスプロファイルにアタッチ
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: 
+        - !Ref S3AccessRole      
+
+Outputs:
+  S3BucketArn:
+    Description: ARN of the S3 bucket
+    Value: !GetAtt S3Bucket.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-S3BucketArn
+
+  S3BucketName:
+    Description: Name of the S3 bucket
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub ${AWS::StackName}-S3BucketName
+
+  S3AccessRoleArn:
+    Description: ARN of the S3 access role
+    Value: !GetAtt S3AccessRole.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-S3AccessRoleArn
+
+  S3AccessInstanceProfile:
+    Description: Name of the S3 access instance profile
+    Value: !Ref S3AccessInstanceProfile
+    Export:
+      Name: !Sub ${AWS::StackName}-S3AccessInstanceProfile    

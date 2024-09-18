@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  # SSH接続を許可するIPアドレス範囲を指定する型
+  AllowedSSHIP:
+    Description: This is the IP address for SSH. (Ex 0.0.0.0/0)
+    Type: String
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+
+Description: 
+  Create security groups for EC2,RDS,ALB
+
+Resources:
+  SecurityGroupEC2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-sg-ec2
+      GroupDescription: This Security Group is for EC2
+      VpcId: !ImportValue Network-VPC-vpc
+      # インバウンド
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref AllowedSSHIP
+      # アウトバウンド    
+      SecurityGroupEgress:
+        # セキュリティ グループに関連付けられた送信ルールは-1ですべてを指定 
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0    
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-sg-ec2
+
+  SecurityGroupALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-sg-alb
+      GroupDescription: This Security Group is for ALB
+      VpcId: !ImportValue Network-VPC-vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0  
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-sg-alb
+
+  SecurityGroupRDS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-sg-rds
+      GroupDescription: This Security Group is for RDS
+      VpcId: !ImportValue Network-VPC-vpc
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref SecurityGroupEC2
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0    
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-sg-rds
+
+Outputs:
+    SGOutput1:
+      Description: "id of the first security group"
+      Value: !Ref SecurityGroupEC2
+      Export:
+        Name: !Sub ${AWS::StackName}-sg1-ec2
+
+    SGOutput2:
+      Description: "id of the second security group"
+      Value: !Ref SecurityGroupALB
+      Export:
+        Name: !Sub ${AWS::StackName}-sg2-alb
+
+    SGOutput3:
+      Description: "id of the third security group"
+      Value: !Ref SecurityGroupRDS
+      Export:
+        Name: !Sub ${AWS::StackName}-sg3-rds

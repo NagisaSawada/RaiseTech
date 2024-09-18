@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create EC2
+
+Parameters: 
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+    Description: Select EC2 instance type.
+  KeyPair:
+    Description: Select KeyPair Name.
+    Type: AWS::EC2::KeyPair::KeyName  
+  Ec2ImageId:
+    #Amazon linux 2 の最新のAMIのIDを参照するためのパラメータ
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2  
+
+Resources: 
+  myEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      KeyName: !Ref KeyPair
+      ImageId: !Ref Ec2ImageId
+      InstanceType: !Ref InstanceType
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          #イーサネットインターフェイスデバイスの番号を0とする
+          DeviceIndex: "0"
+          SubnetId: !ImportValue Network-VPC-subnet-public1
+          GroupSet:
+            - !ImportValue lecture10SG-sg1-ec2
+      IamInstanceProfile: !ImportValue lecture10s3bucket-S3AccessInstanceProfile   
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-ec2
+
+Outputs:
+  EC2InstanceId:
+    Description: The ID of the created EC2Instance
+    Value: !Ref myEC2Instance
+    Export:
+      Name: !Sub ${AWS::StackName}-ec2

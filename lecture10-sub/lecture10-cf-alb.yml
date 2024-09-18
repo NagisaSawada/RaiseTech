@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: create ALB,TG
+
+Resources: 
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      IpAddressType: ipv4
+      Name: !Sub ${AWS::StackName}-alb
+      Scheme: internet-facing
+      SecurityGroups: 
+        - !ImportValue lecture10SG-sg2-alb
+      Subnets: 
+        - !ImportValue Network-VPC-subnet-public1
+        - !ImportValue Network-VPC-subnet-public2
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-alb
+      Type: application  
+  ListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions: 
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      LoadBalancerArn: !Ref ALB
+      Port: 80
+      Protocol: HTTP
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true #ヘルスチェックを有効化
+      HealthCheckIntervalSeconds: 30 #間隔
+      HealthCheckPath: / #ターゲットのヘルスチェックの宛先。デフォルトは / 
+      HealthCheckPort: traffic-port #ロードバランサがターゲットのヘルスチェックを実行するときに使用するポート
+      HealthCheckProtocol: HTTP #ロードバランサーがターゲットのヘルスチェックを実行するときに使用するプロトコル
+      HealthCheckTimeoutSeconds: 5 #ターゲットからの応答がない場合にヘルスチェックが失敗したとみなされる時間 (秒単位)
+      HealthyThresholdCount: 5 #ターゲットが正常であると判断するまでに必要な連続ヘルスチェック成功回数
+      UnhealthyThresholdCount: 2 #ターゲットが異常であると判断するまでに必要な連続ヘルスチェック失敗回数
+      IpAddressType: ipv4
+      Matcher: 
+        HttpCode: 200 #成功コードを指定
+      Name: !Sub ${AWS::StackName}-tg
+      Port: 80
+      Protocol: HTTP
+      ProtocolVersion: HTTP1
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-tg
+      Targets: 
+        - Id: !ImportValue lecture10EC2-ec2
+      TargetType: instance #インスタンス ID でターゲットを登録(これがデフォルト)
+
+      VpcId: !ImportValue Network-VPC-vpc
