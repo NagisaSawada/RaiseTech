@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create RDS
+
+Parameters: 
+  InstanceClass:
+    Default: db.t3.micro
+    Type: String
+  Engine:
+    Default: mysql
+    Type: String
+    Description: The database engine to be used for the RDS instance
+  DatabaseMasterName:
+    Description: Database Master User Name
+    Type : String
+    Default: admin2
+  DatabaseMasterPassword:
+    Description: Name of DB mater user password
+    Type : String
+    NoEcho: true
+  # コストを考慮して最小値を入力  
+  AllocatedStorage:
+    Type: Number
+    Default: 20
+  DatabaseName: 
+    Type: String
+    Default: database2
+ 
+Resources: 
+  rdsDBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: !Ref AllocatedStorage
+      DBInstanceClass: !Ref InstanceClass
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: false
+      AvailabilityZone: ap-northeast-1a
+      # 自動バックアップの指定
+      BackupRetentionPeriod: 1
+      DBInstanceIdentifier: database2
+      DBName: !Ref DatabaseName
+      DBSubnetGroupName: !Ref rdsDBSubnetGroup
+      Engine: !Ref  Engine
+      EngineVersion: 8.0.35
+      #AWSが管理するRDS専用のKMSキーを使用
+      KmsKeyId: alias/aws/rds
+      MasterUsername: !Ref DatabaseMasterName
+      MasterUserPassword: !Ref DatabaseMasterPassword
+      MultiAZ: false #シングルAZ構成
+      #第五回作成RDSのデフォルトを参照
+      PreferredBackupWindow: 13:50-14:20 
+      PreferredMaintenanceWindow: Sun:23:00-Mon:01:00
+      # パブリックアクセスを無効化
+      PubliclyAccessible: false
+      # 暗号化を有効
+      StorageEncrypted: true
+      StorageType: gp2
+      VPCSecurityGroups:
+        - !ImportValue lecture10SG-sg3-rds
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rds
+  rdsDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: For RDS
+      DBSubnetGroupName: !Sub ${AWS::StackName}-db-subnet-group
+      SubnetIds:
+        - !ImportValue Network-VPC-subnet-private1
+        - !ImportValue Network-VPC-subnet-private2 
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-db-subnet-group

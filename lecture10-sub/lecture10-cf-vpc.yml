@@ -1,0 +1,242 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description:
+  Create VPC,Subnet,IGW,and RouteTable
+
+Parameters:
+  myVPCCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+
+  myPublicSubnet1CIDR:
+    Type: String
+    Default: 10.0.1.0/24
+
+  myPublicSubnet2CIDR:
+    Type: String
+    Default: 10.0.3.0/24
+
+  myPrivateSubnet1CIDR:
+    Type: String
+    Default: 10.0.2.0/24
+
+  myPrivateSubnet2CIDR:
+    Type: String
+    Default: 10.0.4.0/24
+
+Resources:
+  myVPC: 
+    Type: AWS::EC2::VPC
+    Properties: 
+      # VPCのIPアドレス範囲を指定
+      CidrBlock: !Ref myVPCCIDR
+      # VPC内のインスタンスがDNSホスト名を取得するように指定
+      EnableDnsHostnames: 'true'
+      # VPCでDNS解決がサポートされているかどうか
+      EnableDnsSupport: 'true'
+      # VPC に起動されたインスタンスの許可されたテナンシー
+      InstanceTenancy: default
+      Tags: 
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-vpc
+
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-IGW
+  # VPCとインターネットゲートウェイをアタッチ
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+         Ref: myVPC
+      InternetGatewayId:
+         Ref: myInternetGateway
+
+  myPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: !Ref myPublicSubnet1CIDR
+      AvailabilityZone: !Select 
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-subnet-public1
+
+  myPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: !Ref myPublicSubnet2CIDR
+      AvailabilityZone: !Select 
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-subnet-public2
+
+  myPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: !Ref myPrivateSubnet1CIDR
+      AvailabilityZone: !Select 
+        - 0
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-subnet-private1
+
+  myPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myVPC
+      CidrBlock: !Ref myPrivateSubnet2CIDR
+      AvailabilityZone: !Select 
+        - 1
+        - Fn::GetAZs: !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-subnet-private2
+
+  myPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rtb-public
+
+  myPrivateRouteTable1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rtb-private1
+
+  myPrivateRouteTable2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  
+        Ref: myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rtb-private2
+  # パブリックルートテーブルにインターネットゲートウェイを関連付け
+  myPublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+       RouteTableId:
+         Ref: myPublicRouteTable
+       DestinationCidrBlock: 0.0.0.0/0
+       GatewayId:
+         Ref: myInternetGateway
+  # サブネットとルートテーブルを関連付け
+  myPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPublicSubnet1
+      RouteTableId:
+        Ref: myPublicRouteTable
+
+  myPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPublicSubnet2
+      RouteTableId:
+        Ref: myPublicRouteTable
+
+  myPrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPrivateSubnet1
+      RouteTableId:
+        Ref: myPrivateRouteTable1
+
+  myPrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: myPrivateSubnet2
+      RouteTableId:
+        Ref: myPrivateRouteTable2
+
+Outputs:
+  myVPC:
+    Value: !Ref myVPC
+    Export:
+      Name: !Sub ${AWS::StackName}-vpc
+
+  myVPCCIDR:
+    Value: !Ref myVPCCIDR
+    Export:
+      Name: !Sub ${AWS::StackName}-vpc-cidr
+
+  myPublicSubnet1:
+    Value: !Ref myPublicSubnet1
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-public1
+
+  myPublicSubnet1CIDR:
+    Value: !Ref myPublicSubnet1CIDR
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-public1-cidr
+
+  myPublicSubnet2:
+    Value: !Ref myPublicSubnet2
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-public2
+
+  myPublicSubnet2CIDR:
+    Value: !Ref myPublicSubnet2CIDR
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-public2-cidr
+
+  myPrivateSubnet1:
+    Value: !Ref myPrivateSubnet1
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-private1
+
+  myPrivateSubnet1CIDR:
+    Value: !Ref myPrivateSubnet1CIDR
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-private1-cidr
+
+  myPrivateSubnet2:
+    Value: !Ref myPrivateSubnet2
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-private2
+
+  myPrivateSubnet2CIDR:
+    Value: !Ref myPrivateSubnet2CIDR
+    Export:
+      Name: !Sub ${AWS::StackName}-subnet-private2-cidr
+
+  myPublicRouteTable:
+    Value: !Ref myPublicRouteTable
+    Export:
+      Name: !Sub ${AWS::StackName}-rtb-public
+
+  myPrivateRouteTable1:
+    Value: !Ref myPrivateRouteTable1
+    Export:
+      Name: !Sub ${AWS::StackName}-rtb-private1
+
+  myPrivateRouteTable2:
+    Value: !Ref myPrivateRouteTable2
+    Export:
+      Name: !Sub ${AWS::StackName}-rtb-private2
