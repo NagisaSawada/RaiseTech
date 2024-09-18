@@ -21,7 +21,8 @@
 | IAMインスタンスプロファイルの定義 | [lecture10-cf-s3.yml](/lecture10-sub/lecture10-cf-s3.yml) |
 | EC2インスタンス | [lecture10-cf-ec2.yml](/lecture10-sub/lecture10-cf-ec2.yml) |
 | RDSインスタンス | [lecture10-cf-rds.yml](/lecture10-sub/lecture10-cf-rds.yml) |
-| RDSのサブネットグループ | [lecture10-cf-rds.yml](/lecture10-sub/lecture10-cf-rds.yml) || ALBのターゲットグループ | [lecture10-cf-alb.yml](/lecture10-sub/lecture10-cf-alb.yml) |
+| RDSのサブネットグループ | [lecture10-cf-rds.yml](/lecture10-sub/lecture10-cf-rds.yml) |
+| ALBのターゲットグループ | [lecture10-cf-alb.yml](/lecture10-sub/lecture10-cf-alb.yml) |
 | ALB | [lecture10-cf-alb.yml](/lecture10-sub/lecture10-cf-alb.yml) |
 | ALBのHTTPリスナー | [lecture10-cf-alb.yml](/lecture10-sub/lecture10-cf-alb.yml) |
 
