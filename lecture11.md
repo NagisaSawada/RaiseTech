@@ -84,20 +84,6 @@
      it { should be_listening }
    end
 
-   # Nginxがインストール済であること
-   describe package('nginx') do
-     it { should be_installed }
-   end
-
-   # 指定のポート（22番・80番）がリッスン（通信待ち受け状態）であること
-   describe port(listen_port1) do
-     it { should be_listening }
-   end
-
-   describe port(listen_port2) do
-     it { should be_listening }
-   end
-
    # curlでHTTPアクセスをして200番を返す動作を確認
    describe command('curl http://127.0.0.1:#{listen_port}/_plugin/head/ -o /dev/null -w "%{http_code}\n" -s') do
      its(:stdout) { should match /^200$/ }
