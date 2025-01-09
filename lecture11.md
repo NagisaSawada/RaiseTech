@@ -2,22 +2,29 @@
 
 ## 第五回で構築した環境にSrverspecを導入しテストを行う
 
-### Srverspecインストール
- - gemで公開されているので以下のコマンドでインストール可能
+### Serverspecインストール
+#### 以下のいずれかの方法でインストール可能
+ - 方法①：以下のコマンドを実行する
    ```
    $ sudo gem install serverspec
    ```
- - もしくはアプリケーションのGemfileに下の行を追加する
+ - 方法②：Gemfileを編集し、bundlerでインストール  
+Gemfileに以下の記述を追記する
    ```
    gem 'serverspec'
-   # 次に下記を実行
+   ```  
+以下のコマンドを実行する
+   ```
    $ bundle
    ```
 
- - Serverspecがインストールされたか確認
+#### 正常にインストール完了したかどうかの判断方法
+ - 以下のコマンドを実行する
    ```
    $ gem list
-   # Serverspec確認できた
+   ```
+ - 期待する実行結果
+   ```
    serverspec (2.42.3)
    ```
 
@@ -52,8 +59,8 @@
    require 'spec_helper'
 
    # ポート指定
-   listen_port1 = 22
-   listen_port2 = 80
+   listen_port_ssh = 22
+   listen_port_http = 80
 
    # パッケージがインストールされているか確認する
    describe package('git') do
@@ -76,11 +83,11 @@
    end
 
    # 指定のポート（22番・80番）がリッスン（通信待ち受け状態）であること
-   describe port(listen_port1) do
+   describe port(listen_port_ssh) do
      it { should be_listening }
    end
 
-   describe port(listen_port2) do
+   describe port(listen_port_http) do
      it { should be_listening }
    end
 
@@ -113,6 +120,6 @@
  ![successfultests2](/images/lecture11/successfultests2.png)
 
 ## 感想
- - 一回目のテストはHTTPアクセスの返事が502番で失敗した。原因はただDBを起動していなかっただけだったが、それを知る為のテストだと思うと楽しかった。
+ - 一回目のテストはHTTPアクセスのレスポンスコードが502番で失敗した。原因はただDBを起動していなかっただけだったが、それを知る為のテストだと思うと楽しかった。
  - 今回は公式サイトやその他技術ブログを参考にテストを作成したが、RSpecの知識を深めたらより細かなテストが行えそうなので興味がわいた。
 

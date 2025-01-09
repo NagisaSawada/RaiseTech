@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 # ポート指定
-listen_port1 = 22
-listen_port2 = 80
+listen_port_ssh = 22
+listen_port_http = 80
 
 # パッケージがインストールされているか確認する
 describe package('git') do
@@ -25,11 +25,11 @@ describe package('nginx') do
 end
 
 # 指定のポート（22番・80番）がリッスン（通信待ち受け状態）であること
-describe port(listen_port1) do
+describe port(listen_port_ssh) do
   it { should be_listening }
 end
 
-describe port(listen_port2) do
+describe port(listen_port_http) do
   it { should be_listening }
 end
 
