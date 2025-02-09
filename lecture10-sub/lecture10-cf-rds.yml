@@ -9,15 +9,11 @@ Parameters:
   Engine:
     Default: mysql
     Type: String
-    Description: The database engine to be used for the RDS instance
+    Description: The database engine to be used for the RDS instance  
   DatabaseMasterName:
     Description: Database Master User Name
     Type : String
     Default: admin2
-  DatabaseMasterPassword:
-    Description: Name of DB mater user password
-    Type : String
-    NoEcho: true
   # コストを考慮して最小値を入力  
   AllocatedStorage:
     Type: Number
@@ -34,7 +30,9 @@ Resources:
       DBInstanceClass: !Ref InstanceClass
       AllowMajorVersionUpgrade: false
       AutoMinorVersionUpgrade: false
-      AvailabilityZone: ap-northeast-1a
+      AvailabilityZone: !Select
+        - 0                     # => ap-northeast-1a
+        - Fn::GetAZs: !Ref AWS::Region
       # 自動バックアップの指定
       BackupRetentionPeriod: 1
       DBInstanceIdentifier: database2
@@ -45,7 +43,7 @@ Resources:
       #AWSが管理するRDS専用のKMSキーを使用
       KmsKeyId: alias/aws/rds
       MasterUsername: !Ref DatabaseMasterName
-      MasterUserPassword: !Ref DatabaseMasterPassword
+      ManageMasterUserPassword: true
       MultiAZ: false #シングルAZ構成
       #第五回作成RDSのデフォルトを参照
       PreferredBackupWindow: 13:50-14:20 
