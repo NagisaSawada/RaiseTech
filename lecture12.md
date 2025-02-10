@@ -11,7 +11,7 @@
       ```
    2. `https://github.com/you/test-repo/settings/keys`に移動して1.で作成したパブリックキーを貼り付けデプロイキーを追加する  
    （Allow write access はオンに設定）  
-   3. CircleCIのプロジェクト設定にて1.で作成したプライベートキーを貼り付けSSHキーを追加する
+   3. CircleCIのプロジェクト設定にてi.で作成したプライベートキーを貼り付けSSHキーを追加する
 
    </details>  
 ### 実践
@@ -39,8 +39,8 @@
  - [CircleCIのローカルCLIのインストール](https://circleci.com/docs/ja/local-cli/)  
    ```
    $ curl -fLSs https://raw.githubusercontent.com/CircleCI-Public/circleci-cli/master/install.sh | bash  
-   # CircleCIのCLIツールはデフォルトで`/usr/local/bin`ディレクトリにインストールされる  
-   # /usr/local/binへの書き込みアクセス権を持っていない場合は、上記コマンドのパイプとbashの間にsudoを挿入して実行
+   # CircleCIのCLIツールはデフォルトで /usr/local/bin ディレクトリにインストールされる  
+   # /usr/local/bin への書き込みアクセス権を持っていない場合は、上記コマンドのパイプとbashの間にsudoを挿入して実行
    ```
  - CLIの設定  
    ※CLIを使用する前にCircleCiの[APIトークンを生成する](https://app.circleci.com/settings/user/tokens)  
@@ -63,7 +63,7 @@
  - Githubにpushすると以下の警告が確認できる  
 ![test-failure](/images/lecture12/test-failure.png)  
 
-   | 警告コード | 警告内容 | 修正点 | 修正後コード |
+   | 警告 <br> コード | 警告内容 | 修正点 | 修正後 <br> コード |
    | --------- | --------- | --------- | --------- |
    | W2506 | cfn-lintの指定するAMIの型は`AWS::EC2::Image::Id`または <br> `AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>` <br> である必要がある | 型を `AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>`  <br> に変更する | [lecture10-cf-ec2.yml](/lecture10-sub/lecture10-cf-ec2.yml) |
    | W3010 | リージョンのハードコードにより柔軟性が失われている | AZを動的に取得する方法として <br> 組み込み関数`Fn::GetAZs`を使用する | [lecture10-cf-rds.yml](/lecture10-sub/lecture10-cf-rds.yml) |
