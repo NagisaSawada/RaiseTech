@@ -20,8 +20,6 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-      #バケットのアクセス許可をプライベートに設定  
-      AccessControl: Private
       Tags:
       -
         Key: Name

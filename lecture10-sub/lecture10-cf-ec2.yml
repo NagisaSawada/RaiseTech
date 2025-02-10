@@ -16,7 +16,7 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName  
   Ec2ImageId:
     #Amazon linux 2 の最新のAMIのIDを参照するためのパラメータ
-    Type: AWS::SSM::Parameter::Value<String>
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2  
 
 Resources: 
