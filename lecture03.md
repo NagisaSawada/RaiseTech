@@ -1,17 +1,17 @@
 # 第三回授業課題
 ## APサーバーについて
  - サンプルAP接続確認画面
- ![サンプルAP](/images/sampleapconnection.png)
+ ![サンプルAP](/images/lecture03/sampleapconnection.png)
  - APサーバーの名前：Puma、バージョン：5.6.8
- ![APサーバー](/images/apserver.png)
+ ![APサーバー](/images/lecture03/apserver.png)
  - APサーバーを終了させるとアクセスできなくなったが、再度APサーバーを起動するとアクセス可能になった
- ![アクセス不可](/images/apserverstop.png)
+ ![アクセス不可](/images/lecture03/apserverstop.png)
  
  ## DBサーバーについて
  - サンプルAPで使用したDBサーバーの名前：MySQL、バージョン：8.0.36
- ![DBサーバー](/images/dbserver.png)
+ ![DBサーバー](/images/lecture03/dbserver.png)
  - DBサーバーを終了させるとアクセスできなくなった
- ![DBサーバー停止](/images/dbserverstop.png)
+ ![DBサーバー停止](/images/lecture03/dbserverstop.png)
  - Railsの構成管理ツールの名前：Bundler
  
 ## 学んだこと
